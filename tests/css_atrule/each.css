@@ -215,3 +215,22 @@ h3
 {
 
 }
+
+@each $label, $map in $breakpoint-map {
+    $min-width: map-get($map, min-width);
+    $max-width: map-get($map, max-width);
+    $base-font: map-get($map, base-font);
+    $vertical-rhythm: map-get($map, vertical-rhythm);
+}
+
+@each $name, $icon in (
+    glass: "\f000",
+    music: "\f001",
+    search: "\f002",
+    envelope-o: "\f003",
+    heart: "\f004"
+) {
+    .fa-#{$name}:before {
+        content: $icon;
+    }
+}

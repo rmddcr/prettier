@@ -98,6 +98,70 @@ function insideAtRuleNode(path, atRuleName) {
   );
 }
 
+function insideURLFunctionInImportAtRuleNode(path) {
+  const node = path.getValue();
+  const atRuleAncestorNode = getAncestorNode(path, "css-atrule");
+
+  return (
+    atRuleAncestorNode &&
+    atRuleAncestorNode.name === "import" &&
+    node.groups[0].value === "url" &&
+    node.groups.length === 2
+  );
+}
+
+function insideInSCSSMapNode(path) {
+  const parentNode = path.getParentNode();
+
+  if (!["value-value", "value-comma_group"].includes(parentNode.type)) {
+    return false;
+  }
+
+  const ancestorNode = getAncestorNode(path, [
+    "value-paren_group",
+    "value-value"
+  ]);
+
+  if (!ancestorNode) {
+    return false;
+  }
+
+  let group = null;
+
+  if (ancestorNode.type === "value-value") {
+    group = ancestorNode.group;
+  } else {
+    group = ancestorNode;
+  }
+
+  if (!group.open) {
+    return false;
+  }
+
+  if (!group.groups) {
+    return false;
+  }
+
+  if (!group.groups[0]) {
+    return false;
+  }
+
+  return group.groups[0].type === "value-comma_group";
+}
+
+function insideInNestedSCSSMapNode(path) {
+  const node = path.getValue();
+  const parentNode = path.getParentNode();
+
+  if (parentNode.type !== "value-paren_group") {
+    return false;
+  }
+
+  return (
+    node.groups && node.groups[2] && node.groups[2].type === "value-paren_group"
+  );
+}
+
 function isURLFunctionNode(node) {
   return node.type === "value-func" && node.value.toLowerCase() === "url";
 }
@@ -176,10 +240,6 @@ function isSCSSControlDirectiveNode(node) {
   );
 }
 
-function isSCSSMapNode(node) {
-  return node.type === "css-decl" && node.prop && node.prop.startsWith("$");
-}
-
 function isSCSSNestedPropertyNode(node) {
   if (!node.selector) {
     return false;
@@ -194,6 +254,16 @@ function isSCSSNestedPropertyNode(node) {
 
 function isDetachedRulesetCallNode(node) {
   return node.raws && node.raws.params && /^\(\s*\)$/.test(node.raws.params);
+}
+
+function isPostcssSimpleVarNode(currentNode, nextNode) {
+  return (
+    currentNode.value === "$$" &&
+    currentNode.type === "value-func" &&
+    nextNode &&
+    nextNode.type === "value-word" &&
+    !nextNode.raws.before
+  );
 }
 
 function hasLessExtendValueNode(node) {
@@ -229,15 +299,6 @@ function hasParensAroundValueNode(node) {
   );
 }
 
-function isPostcssSimpleVarNode(currentNode, nextNode) {
-  return (
-    currentNode.value === "$$" &&
-    currentNode.type === "value-func" &&
-    nextNode &&
-    nextNode.type === "value-word" &&
-    !nextNode.raws.before
-  );
-}
 module.exports = {
   getAncestorCounter,
   getAncestorNode,
@@ -246,6 +307,9 @@ module.exports = {
   insideValueFunctionNode,
   insideICSSRuleNode,
   insideAtRuleNode,
+  insideURLFunctionInImportAtRuleNode,
+  insideInSCSSMapNode,
+  insideInNestedSCSSMapNode,
   isKeyframeAtRuleKeywords,
   isHTMLTag,
   isWideKeywords,
@@ -264,7 +328,6 @@ module.exports = {
   hasLessExtendValueNode,
   hasComposesValueNode,
   hasParensAroundValueNode,
-  isSCSSMapNode,
   isSCSSNestedPropertyNode,
   isDetachedRulesetCallNode,
   isPostcssSimpleVarNode

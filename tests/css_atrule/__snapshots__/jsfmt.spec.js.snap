@@ -1095,6 +1095,25 @@ h3
 {
 
 }
+
+@each $label, $map in $breakpoint-map {
+    $min-width: map-get($map, min-width);
+    $max-width: map-get($map, max-width);
+    $base-font: map-get($map, base-font);
+    $vertical-rhythm: map-get($map, vertical-rhythm);
+}
+
+@each $name, $icon in (
+    glass: "\\f000",
+    music: "\\f001",
+    search: "\\f002",
+    envelope-o: "\\f003",
+    heart: "\\f004"
+) {
+    .fa-#{$name}:before {
+        content: $icon;
+    }
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 @each $animal in puma, sea-slug, egret, salamander {
 }
@@ -1161,6 +1180,28 @@ h3
 @each $element, $size in (h1: 20px, h2: 16px, h3: 14px) {
 }
 @each $element, $size in (h1: 20px, h2: 16px, h3: 14px) {
+}
+
+@each $label, $map in $breakpoint-map {
+  $min-width: map-get($map, min-width);
+  $max-width: map-get($map, max-width);
+  $base-font: map-get($map, base-font);
+  $vertical-rhythm: map-get($map, vertical-rhythm);
+}
+
+@each $name,
+  $icon
+    in (
+      glass: "\\f000",
+      music: "\\f001",
+      search: "\\f002",
+      envelope-o: "\\f003",
+      heart: "\\f004"
+    )
+{
+  .fa-#{$name}:before {
+    content: $icon;
+  }
 }
 
 `;
@@ -2400,6 +2441,30 @@ a {
 
         }
 }
+
+a {
+@include section-type-1(
+$header: (margin: 0 0 $margin-base, text-align: left),
+$decoration: (type: base, margin: 0 auto -1px 0, primary-color: $brand-primary, secondary-color: $gray-light),
+$title: (margin: 0 0 $margin-small, color: false, font-size: $font-size-h3, font-weight: false, line-height: $line-height-h3)
+);
+}
+
+a {
+@include item-spotlight-properties-transition(
+"-title",
+(box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15))
+);
+}
+a {
+@include item-spotlight-properties-transition(
+"-title",
+(
+box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15),
+border-color: $brand-primary
+)
+);
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 @include mix(1px, 2px, $arg2: 10, 2px 4px 6px);
 @include mix(1px, 2px, $arg2: 10, 2px 4px 6px);
@@ -2439,6 +2504,44 @@ a {
   }
   @include apply-to-ie6-only {
   }
+}
+
+a {
+  @include section-type-1(
+    $header:
+      (
+        margin: 0 0 $margin-base,
+        text-align: left
+      ),
+    $decoration:
+      (
+        type: base,
+        margin: 0 auto -1px 0,
+        primary-color: $brand-primary,
+        secondary-color: $gray-light
+      ),
+    $title:
+      (
+        margin: 0 0 $margin-small,
+        color: false,
+        font-size: $font-size-h3,
+        font-weight: false,
+        line-height: $line-height-h3
+      )
+  );
+}
+
+a {
+  @include item-spotlight-properties-transition(
+    "-title",
+    (box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15))
+  );
+}
+a {
+  @include item-spotlight-properties-transition(
+    "-title",
+    (box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15), border-color: $brand-primary)
+  );
 }
 
 `;
@@ -4093,7 +4196,7 @@ run-in
     (-moz-transform-style: preserve-3d) or
       (
         (-o-transform-style: preserve-3d) or
-          (-webkit-transform-style: preserve-3d)
+        (-webkit-transform-style: preserve-3d)
       )
   ) {
 }
